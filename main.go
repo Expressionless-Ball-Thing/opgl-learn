@@ -28,7 +28,7 @@ func main() {
 	window := setup()
 
 	// Load Render here
-	var render renders.Render = &renders.RainbowTriangle{}
+	var render renders.Render = &renders.ContainerTexture{}
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
@@ -58,7 +58,6 @@ func processInput(window *glfw.Window) {
 	if window.GetKey(glfw.KeyEscape) == glfw.Press {
 		window.SetShouldClose(true)
 	}
-	window.SwapBuffers()
 }
 
 // Setup GLFW and OpenGL function loaders

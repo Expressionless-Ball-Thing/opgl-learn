@@ -87,7 +87,7 @@ type RainbowTriangle struct {
 
 func (rt *RainbowTriangle) InitGLPipeLine() {
 
-	rt.ShaderProgram = NewShader("./shaders/rainbowTriangleVert.glsl", "./shaders/rainbowTriangleFrag.glsl")
+	rt.ShaderProgram = NewShader("./shaders/3-rainbowTriangleVert.glsl", "./shaders/3-rainbowTriangleFrag.glsl")
 
 	var vertices = []float32{
 		// positions    // colors

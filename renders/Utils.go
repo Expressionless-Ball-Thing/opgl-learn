@@ -2,6 +2,9 @@ package renders
 
 import (
 	"fmt"
+	"image"
+	"image/draw"
+	"image/png"
 	"os"
 	"strings"
 
@@ -87,4 +90,55 @@ func compileShader(ShaderSource string, ShaderType uint32) uint32 {
 	}
 
 	return shader
+}
+
+// load and create a texture
+func New2DTexture(wrap_s, wrap_t, min_filter, max_filter int32, texturePath string) uint32 {
+	var texture uint32
+	gl.GenTextures(1, &texture)
+	gl.BindTexture(gl.TEXTURE_2D, texture) // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+	// set the texture wrapping parameters
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap_s) // set texture wrapping to GL_REPEAT (default wrapping method)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap_t)
+	// set texture filtering parameters
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, min_filter)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, max_filter)
+
+	// load image, create texture and generate mipmaps
+	file, err := os.Open(texturePath)
+	if err != nil {
+		fmt.Println("Cannot open texture file")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	img, err2 := png.Decode(file)
+	if err2 != nil {
+		fmt.Println("error decoding the image")
+		fmt.Println(err2)
+		os.Exit(1)
+	}
+
+	rgba := image.NewRGBA(img.Bounds())
+	if rgba.Stride != rgba.Rect.Size().X*4 {
+		fmt.Println("unsupported stride")
+		os.Exit(1)
+	}
+	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
+
+	gl.TexImage2D(
+		gl.TEXTURE_2D,
+		0,
+		gl.RGBA,
+		int32(img.Bounds().Max.X),
+		int32(img.Bounds().Max.Y),
+		0,
+		gl.RGBA,
+		gl.UNSIGNED_BYTE,
+		gl.Ptr(rgba.Pix),
+	)
+	gl.GenerateMipmap(gl.TEXTURE_2D)
+	gl.BindTexture(gl.TEXTURE_2D, 0)
+	return texture
 }
