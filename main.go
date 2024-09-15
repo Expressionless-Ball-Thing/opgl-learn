@@ -28,7 +28,7 @@ func main() {
 	window := setup()
 
 	// Load Render here
-	var render renders.Render = &renders.ContainerTexture{}
+	var render renders.Render = &renders.Transformation{}
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
