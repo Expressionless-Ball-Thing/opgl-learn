@@ -80,7 +80,6 @@ func (ct *Transformation) Draw() {
 	trans = trans.Mul4(mgl32.Translate3D(0.5, -0.5, 0))
 	trans = trans.Mul4(mgl32.HomogRotate3D(float32(glfw.GetTime()), mgl32.Vec3{0.0, 0.0, 1.0}))
 
-	gl.UseProgram(ct.ShaderProgram)
 	transformLoc := gl.GetUniformLocation(ct.ShaderProgram, gl.Str("transform"+"\x00"))
 	gl.UniformMatrix4fv(transformLoc, 1, false, &trans[0])
 

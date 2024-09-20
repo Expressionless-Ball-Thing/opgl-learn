@@ -27,8 +27,12 @@ func main() {
 	defer glfw.Terminate()
 	window := setup()
 
+	// configure global opengl state
+	// -----------------------------
+	gl.Enable(gl.DEPTH_TEST) // Tell opengl to enable depth testing
+
 	// Load Render here
-	var render renders.Render = &renders.Transformation{}
+	var render renders.Render = &renders.MoreCubes{}
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
