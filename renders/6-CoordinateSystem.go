@@ -1,6 +1,8 @@
 package renders
 
 import (
+	"opgl-learn/utils"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/go-gl/mathgl/mgl32"
@@ -13,7 +15,7 @@ type Coordinates struct {
 }
 
 func (ct *Coordinates) InitGLPipeLine() {
-	ct.ShaderProgram = NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
 
 	// Eight per vertex, 3 position, 2 texture coords.
 	var vertices = []float32{
@@ -49,8 +51,8 @@ func (ct *Coordinates) InitGLPipeLine() {
 	gl.VertexAttribPointerWithOffset(1, 2, gl.FLOAT, false, 5*4, 3*4)
 	gl.EnableVertexAttribArray(1)
 
-	ct.texture1 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
-	ct.texture2 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
+	ct.texture1 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
+	ct.texture2 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
@@ -94,6 +96,50 @@ func (ct *Coordinates) Draw() {
 
 }
 
+var cube_vertices = []float32{
+	-0.5, -0.5, -0.5, 0.0, 0.0,
+	0.5, -0.5, -0.5, 1.0, 0.0,
+	0.5, 0.5, -0.5, 1.0, 1.0,
+	0.5, 0.5, -0.5, 1.0, 1.0,
+	-0.5, 0.5, -0.5, 0.0, 1.0,
+	-0.5, -0.5, -0.5, 0.0, 0.0,
+
+	-0.5, -0.5, 0.5, 0.0, 0.0,
+	0.5, -0.5, 0.5, 1.0, 0.0,
+	0.5, 0.5, 0.5, 1.0, 1.0,
+	0.5, 0.5, 0.5, 1.0, 1.0,
+	-0.5, 0.5, 0.5, 0.0, 1.0,
+	-0.5, -0.5, 0.5, 0.0, 0.0,
+
+	-0.5, 0.5, 0.5, 1.0, 0.0,
+	-0.5, 0.5, -0.5, 1.0, 1.0,
+	-0.5, -0.5, -0.5, 0.0, 1.0,
+	-0.5, -0.5, -0.5, 0.0, 1.0,
+	-0.5, -0.5, 0.5, 0.0, 0.0,
+	-0.5, 0.5, 0.5, 1.0, 0.0,
+
+	0.5, 0.5, 0.5, 1.0, 0.0,
+	0.5, 0.5, -0.5, 1.0, 1.0,
+	0.5, -0.5, -0.5, 0.0, 1.0,
+	0.5, -0.5, -0.5, 0.0, 1.0,
+	0.5, -0.5, 0.5, 0.0, 0.0,
+	0.5, 0.5, 0.5, 1.0, 0.0,
+
+	-0.5, -0.5, -0.5, 0.0, 1.0,
+	0.5, -0.5, -0.5, 1.0, 1.0,
+	0.5, -0.5, 0.5, 1.0, 0.0,
+	0.5, -0.5, 0.5, 1.0, 0.0,
+	-0.5, -0.5, 0.5, 0.0, 0.0,
+	-0.5, -0.5, -0.5, 0.0, 1.0,
+
+	-0.5, 0.5, -0.5, 0.0, 1.0,
+	0.5, 0.5, -0.5, 1.0, 1.0,
+	0.5, 0.5, 0.5, 1.0, 0.0,
+	0.5, 0.5, 0.5, 1.0, 0.0,
+	-0.5, 0.5, 0.5, 0.0, 0.0,
+	-0.5, 0.5, -0.5, 0.0, 1.0,
+}
+
 type Cube struct {
 	ShaderProgram      uint32
 	VAO, VBO, EBO      uint32
@@ -102,51 +148,9 @@ type Cube struct {
 
 func (ct *Cube) InitGLPipeLine() {
 
-	ct.ShaderProgram = NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
 
-	var vertices = []float32{
-		-0.5, -0.5, -0.5, 0.0, 0.0,
-		0.5, -0.5, -0.5, 1.0, 0.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 0.0,
-
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 1.0,
-		0.5, 0.5, 0.5, 1.0, 1.0,
-		-0.5, 0.5, 0.5, 0.0, 1.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-
-		-0.5, 0.5, 0.5, 1.0, 0.0,
-		-0.5, 0.5, -0.5, 1.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		-0.5, 0.5, 0.5, 1.0, 0.0,
-
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, 0.5, 0.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, -0.5, 1.0, 1.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		-0.5, 0.5, 0.5, 0.0, 0.0,
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-	}
+	var vertices = cube_vertices
 
 	gl.GenVertexArrays(1, &ct.VAO)
 	gl.GenBuffers(1, &ct.VBO)
@@ -162,8 +166,8 @@ func (ct *Cube) InitGLPipeLine() {
 	gl.VertexAttribPointerWithOffset(1, 2, gl.FLOAT, false, 5*4, 3*4)
 	gl.EnableVertexAttribArray(1)
 
-	ct.texture1 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
-	ct.texture2 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
+	ct.texture1 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
+	ct.texture2 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
@@ -215,51 +219,9 @@ type MoreCubes struct {
 
 func (ct *MoreCubes) InitGLPipeLine() {
 
-	ct.ShaderProgram = NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
 
-	var vertices = []float32{
-		-0.5, -0.5, -0.5, 0.0, 0.0,
-		0.5, -0.5, -0.5, 1.0, 0.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 0.0,
-
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 1.0,
-		0.5, 0.5, 0.5, 1.0, 1.0,
-		-0.5, 0.5, 0.5, 0.0, 1.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-
-		-0.5, 0.5, 0.5, 1.0, 0.0,
-		-0.5, 0.5, -0.5, 1.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		-0.5, 0.5, 0.5, 1.0, 0.0,
-
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, 0.5, 0.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-		0.5, -0.5, -0.5, 1.0, 1.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		0.5, -0.5, 0.5, 1.0, 0.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0,
-		-0.5, -0.5, -0.5, 0.0, 1.0,
-
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-		0.5, 0.5, -0.5, 1.0, 1.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 0.0,
-		-0.5, 0.5, 0.5, 0.0, 0.0,
-		-0.5, 0.5, -0.5, 0.0, 1.0,
-	}
+	var vertices = cube_vertices
 
 	ct.cube_positions = []mgl32.Vec3{
 		{0.0, 0.0, 0.0},
@@ -288,8 +250,8 @@ func (ct *MoreCubes) InitGLPipeLine() {
 	gl.VertexAttribPointerWithOffset(1, 2, gl.FLOAT, false, 5*4, 3*4)
 	gl.EnableVertexAttribArray(1)
 
-	ct.texture1 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
-	ct.texture2 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
+	ct.texture1 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
+	ct.texture2 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
@@ -312,7 +274,7 @@ func (ct *MoreCubes) Draw() {
 	// create transformations
 	view, projection := mgl32.Ident4(), mgl32.Ident4()
 	view = view.Mul4(mgl32.Translate3D(0, 0, -3))
-	projection = mgl32.Perspective(mgl32.DegToRad(45), 16.0/9.0, 0.1, 100)
+	projection = mgl32.Perspective(mgl32.DegToRad(45), float32(800/600), 0.1, 100)
 
 	// retrieve the matrix uniform locations
 	modelLoc := gl.GetUniformLocation(ct.ShaderProgram, gl.Str("model"+"\x00"))
@@ -333,5 +295,4 @@ func (ct *MoreCubes) Draw() {
 		gl.UniformMatrix4fv(modelLoc, 1, false, &model[0])
 		gl.DrawArrays(gl.TRIANGLES, 0, 36)
 	}
-
 }

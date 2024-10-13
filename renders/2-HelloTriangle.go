@@ -1,6 +1,8 @@
 package renders
 
 import (
+	"opgl-learn/utils"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
@@ -37,7 +39,7 @@ func (t *Triangle) InitGLPipeLine() {
 		0.0, 0.5, 0.0, // top
 	}
 
-	t.ShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
+	t.ShaderProgram = utils.CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
 
 	// Generate Buffers
 	gl.GenVertexArrays(1, &t.VAO)
@@ -94,7 +96,7 @@ func (tt *TwoTriangles) InitGLPipeLine() {
 		1, 2, 3, // Second Triangle
 	}
 
-	tt.ShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
+	tt.ShaderProgram = utils.CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
 
 	// Generate Buffers
 	gl.GenVertexArrays(1, &tt.VAO)

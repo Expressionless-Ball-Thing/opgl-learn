@@ -2,6 +2,7 @@ package renders
 
 import (
 	"math"
+	"opgl-learn/utils"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -37,7 +38,7 @@ func (ct *ChangingTriangle) InitGLPipeLine() {
 	}
 	` + "\x00"
 
-	ct.ShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
+	ct.ShaderProgram = utils.CreateShaderProgram(vertexShaderSource, fragmentShaderSource)
 
 	var vertices = []float32{
 		-0.5, -0.5, 0.0, // left
@@ -87,7 +88,7 @@ type RainbowTriangle struct {
 
 func (rt *RainbowTriangle) InitGLPipeLine() {
 
-	rt.ShaderProgram = NewShader("./shaders/3-rainbowTriangleVert.glsl", "./shaders/3-rainbowTriangleFrag.glsl")
+	rt.ShaderProgram = utils.NewShader("./shaders/3-rainbowTriangleVert.glsl", "./shaders/3-rainbowTriangleFrag.glsl")
 
 	var vertices = []float32{
 		// positions    // colors

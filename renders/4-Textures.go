@@ -1,6 +1,8 @@
 package renders
 
 import (
+	"opgl-learn/utils"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
@@ -12,7 +14,7 @@ type ContainerTexture struct {
 
 func (ct *ContainerTexture) InitGLPipeLine() {
 
-	ct.ShaderProgram = NewShader("./shaders/4-TextureVert.glsl", "./shaders/4-TextureFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/4-TextureVert.glsl", "./shaders/4-TextureFrag.glsl")
 
 	// Eight per vertex, 3 position, 3 color, 2 texture coords.
 	var vertices = []float32{
@@ -52,8 +54,8 @@ func (ct *ContainerTexture) InitGLPipeLine() {
 	gl.VertexAttribPointerWithOffset(2, 2, gl.FLOAT, false, 8*4, 6*4)
 	gl.EnableVertexAttribArray(2)
 
-	ct.texture1 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
-	ct.texture2 = New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
+	ct.texture1 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container.png")
+	ct.texture2 = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/face.png")
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------

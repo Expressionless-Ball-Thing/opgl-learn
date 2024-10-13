@@ -1,4 +1,4 @@
-package renders
+package utils
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 // Given the filepath to the vertex and fragment shader file, make the shader program
@@ -90,6 +91,47 @@ func compileShader(ShaderSource string, ShaderType uint32) uint32 {
 	}
 
 	return shader
+}
+
+// utility uniform functions
+
+/*
+boolValue should either be GL_FALSE or GL_TRUE
+*/
+func SetBool(program uint32, name string, boolValue int32) {
+	gl.Uniform1i(gl.GetUniformLocation(program, gl.Str(name+"\x00")), boolValue)
+}
+
+func SetInt(program uint32, name string, value int32) {
+	gl.Uniform1i(gl.GetUniformLocation(program, gl.Str(name+"\x00")), value)
+}
+
+func SetFloat(program uint32, name string, value float32) {
+	gl.Uniform1f(gl.GetUniformLocation(program, gl.Str(name+"\x00")), value)
+}
+
+func SetVec2(program uint32, name string, value *mgl32.Vec2) {
+	gl.Uniform2fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, &value[0])
+}
+
+func SetVec3(program uint32, name string, value *mgl32.Vec3) {
+	gl.Uniform3fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, &value[0])
+}
+
+func SetVec4(program uint32, name string, value *mgl32.Vec4) {
+	gl.Uniform4fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, &value[0])
+}
+
+func SetMat2(program uint32, name string, value *mgl32.Mat2) {
+	gl.UniformMatrix2fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, false, &value[0])
+}
+
+func SetMat3(program uint32, name string, value *mgl32.Mat3) {
+	gl.UniformMatrix3fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, false, &value[0])
+}
+
+func SetMat4(program uint32, name string, value *mgl32.Mat4) {
+	gl.UniformMatrix4fv(gl.GetUniformLocation(program, gl.Str(name+"\x00")), 1, false, &value[0])
 }
 
 // load and create a texture
