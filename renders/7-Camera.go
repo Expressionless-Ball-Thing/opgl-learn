@@ -92,7 +92,7 @@ func (ct *Camera) Draw() {
 	view := mgl32.LookAtV(ct.cameraPos, ct.cameraPos.Add(ct.cameraFront), ct.cameraUp)
 	utils.SetMat4(ct.ShaderProgram, "view", &view)
 
-	projection = mgl32.Perspective(mgl32.DegToRad(float32(fov)), float32(800/600), 0.1, 100)
+	projection = mgl32.Perspective(mgl32.DegToRad(float32(fov)), float32(16.0/9.0), 0.1, 100)
 	utils.SetMat4(ct.ShaderProgram, "projection", &projection)
 
 	// render boxes
@@ -116,6 +116,9 @@ func (ct *Camera) KeyboardCallback(window *glfw.Window) {
 	lastFrame = currentFrame
 
 	cameraSpeed := float32(2.5 * deltaTime)
+	if window.GetKey(glfw.KeyEscape) == glfw.Press {
+		window.SetShouldClose(true)
+	}
 	if window.GetKey(glfw.KeyW) == glfw.Press {
 		ct.cameraPos = ct.cameraPos.Add(ct.cameraFront.Mul(cameraSpeed))
 	}
@@ -142,7 +145,7 @@ func (ct *Camera) MouseCallback(window *glfw.Window, xpos float64, ypos float64)
 	lastxPos = xpos
 	lastyPos = ypos
 
-	sensitivity := 0.1
+	sensitivity := 0.5
 	xoffset *= sensitivity
 	yoffset *= sensitivity
 

@@ -16,7 +16,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
-var WIDTH, HEIGHT = 800, 600
+var WIDTH, HEIGHT = 1920, 1080
 
 func main() {
 
@@ -52,6 +52,7 @@ func main() {
 		glfw.PollEvents()
 	}
 
+	glfw.Terminate()
 }
 
 func framebuffer_size_callback(window *glfw.Window, width, height int) {
