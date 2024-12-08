@@ -67,13 +67,7 @@ func NewCameraWithScalars(posX, posY, posZ, upX, upY, upZ float32, yaw, pitch fl
 }
 
 func (c *Camera) GetViewMatrix() mgl32.Mat4 {
-	eye := c.Position
-	center := c.Position.Add(c.Front)
-	up := c.Up
-	return mgl32.LookAt(
-		eye.X(), eye.Y(), eye.Z(),
-		center.X(), center.Y(), center.Z(),
-		up.X(), up.Y(), up.Z())
+	return mgl32.LookAtV(c.Position, c.Position.Add(c.Front), c.Up)
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -133,7 +127,7 @@ func (c *Camera) updateCameraVectors() {
 	y := float32(math.Sin(mgl64.DegToRad(c.Pitch)))
 	z := float32(math.Sin(mgl64.DegToRad(c.Yaw)) * math.Cos(mgl64.DegToRad(c.Pitch)))
 	front := mgl32.Vec3{x, y, z}
-	front = front.Normalize()
+	c.Front = front.Normalize()
 	// Also re-calculate the Right and Up vector
 	// Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	c.Right = front.Cross(c.WorldUp).Normalize()

@@ -1,7 +1,6 @@
-package renders
+package basics
 
 import (
-	"math"
 	"opgl-learn/utils"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
@@ -10,11 +9,11 @@ import (
 )
 
 type Camera struct {
-	ShaderProgram                    uint32
-	VAO, VBO, EBO                    uint32
-	texture1, texture2               uint32
-	cube_positions                   []mgl32.Vec3
-	cameraPos, cameraUp, cameraFront mgl32.Vec3
+	ShaderProgram      uint32
+	VAO, VBO, EBO      uint32
+	texture1, texture2 uint32
+	cube_positions     []mgl32.Vec3
+	camera             utils.Camera
 }
 
 var (
@@ -27,9 +26,7 @@ var (
 )
 
 func (ct *Camera) InitGLPipeLine() {
-	ct.cameraPos = mgl32.Vec3{0, 0, 3}
-	ct.cameraFront = mgl32.Vec3{0, 0, -1}
-	ct.cameraUp = mgl32.Vec3{0, 1, 0}
+	ct.camera = utils.NewCamera(mgl32.Vec3{0, 0, 3}, mgl32.Vec3{0, 1, 0}, utils.YAW, utils.PITCH)
 
 	ct.ShaderProgram = utils.NewShader("./shaders/6-CoordinatesVert.glsl", "./shaders/6-CoordinatesFrag.glsl")
 
@@ -89,7 +86,7 @@ func (ct *Camera) Draw() {
 	// camera/view transformation
 	projection := mgl32.Ident4()
 	// Look AT consists of a matrix with the right, up and direction vector, multiplied by a matrix consists of the camera's position.
-	view := mgl32.LookAtV(ct.cameraPos, ct.cameraPos.Add(ct.cameraFront), ct.cameraUp)
+	view := ct.camera.GetViewMatrix()
 	utils.SetMat4(ct.ShaderProgram, "view", &view)
 
 	projection = mgl32.Perspective(mgl32.DegToRad(float32(fov)), float32(16.0/9.0), 0.1, 100)
@@ -110,30 +107,29 @@ func (ct *Camera) Draw() {
 var lastFrame float64 = 0.0
 
 func (ct *Camera) KeyboardCallback(window *glfw.Window) {
-
 	currentFrame := glfw.GetTime()
 	deltaTime := currentFrame - lastFrame
 	lastFrame = currentFrame
 
-	cameraSpeed := float32(2.5 * deltaTime)
 	if window.GetKey(glfw.KeyEscape) == glfw.Press {
 		window.SetShouldClose(true)
 	}
 	if window.GetKey(glfw.KeyW) == glfw.Press {
-		ct.cameraPos = ct.cameraPos.Add(ct.cameraFront.Mul(cameraSpeed))
+		ct.camera.ProcessKeyboard(utils.FORWARD, deltaTime)
 	}
 	if window.GetKey(glfw.KeyS) == glfw.Press {
-		ct.cameraPos = ct.cameraPos.Sub(ct.cameraFront.Mul(cameraSpeed))
+		ct.camera.ProcessKeyboard(utils.BACKWARD, deltaTime)
 	}
 	if window.GetKey(glfw.KeyA) == glfw.Press {
-		ct.cameraPos = ct.cameraPos.Sub(ct.cameraFront.Cross(ct.cameraUp).Normalize().Mul(cameraSpeed))
+		ct.camera.ProcessKeyboard(utils.LEFT, deltaTime)
 	}
 	if window.GetKey(glfw.KeyD) == glfw.Press {
-		ct.cameraPos = ct.cameraPos.Add(ct.cameraFront.Cross(ct.cameraUp).Normalize().Mul(cameraSpeed))
+		ct.camera.ProcessKeyboard(utils.RIGHT, deltaTime)
 	}
 }
 
 func (ct *Camera) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
+
 	if firstMouse {
 		firstMouse = false
 		lastxPos = xpos
@@ -145,34 +141,9 @@ func (ct *Camera) MouseCallback(window *glfw.Window, xpos float64, ypos float64)
 	lastxPos = xpos
 	lastyPos = ypos
 
-	sensitivity := 0.5
-	xoffset *= sensitivity
-	yoffset *= sensitivity
-
-	yaw += xoffset
-	pitch += yoffset
-
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	if pitch > 89.0 {
-		pitch = 89.0
-	}
-	if pitch < -89.0 {
-		pitch = -89.0
-	}
-
-	ct.cameraFront = mgl32.Vec3{
-		float32(math.Cos(float64(mgl32.DegToRad(float32(yaw)))) * math.Cos(float64(mgl32.DegToRad(float32(pitch))))),
-		float32(math.Sin(float64(mgl32.DegToRad(float32(pitch))))),
-		float32(math.Sin(float64(mgl32.DegToRad(float32(yaw)))) * math.Cos(float64(mgl32.DegToRad(float32(pitch))))),
-	}
+	ct.camera.ProcessMouseMovement(xoffset, yoffset, true)
 }
 
 func (ct *Camera) ScrollCallback(window *glfw.Window, xoff float64, yoff float64) {
-	fov -= yoff
-	if fov < 1 {
-		fov = 1
-	}
-	if fov > 45 {
-		fov = 45
-	}
+	ct.camera.ProcessMouseScroll(yoff)
 }

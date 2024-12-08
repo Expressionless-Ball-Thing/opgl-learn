@@ -1,4 +1,4 @@
-package renders
+package basics
 
 import (
 	"opgl-learn/utils"

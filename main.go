@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"opgl-learn/renders"
+	lighting "opgl-learn/renders/Lighting"
 	"os"
 	"runtime"
 
@@ -16,7 +17,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
-var WIDTH, HEIGHT = 1920, 1080
+var WIDTH, HEIGHT = 800, 600
 
 func main() {
 
@@ -32,8 +33,7 @@ func main() {
 	gl.Enable(gl.DEPTH_TEST) // Tell opengl to enable depth testing
 
 	// Load Render here
-	var render renders.Render = &renders.Camera{}
-
+	var render renders.Render = &lighting.Lighting{}
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
 	window.SetCursorPosCallback(render.MouseCallback)

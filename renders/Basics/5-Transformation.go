@@ -1,20 +1,21 @@
-package renders
+package basics
 
 import (
 	"opgl-learn/utils"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
-type ContainerTexture struct {
+type Transformation struct {
 	ShaderProgram      uint32
 	VAO, VBO, EBO      uint32
 	texture1, texture2 uint32
 }
 
-func (ct *ContainerTexture) InitGLPipeLine() {
-
-	ct.ShaderProgram = utils.NewShader("./shaders/4-TextureVert.glsl", "./shaders/4-TextureFrag.glsl")
+func (ct *Transformation) InitGLPipeLine() {
+	ct.ShaderProgram = utils.NewShader("./shaders/5-TransformVert.glsl", "./shaders/5-TransformFrag.glsl")
 
 	// Eight per vertex, 3 position, 3 color, 2 texture coords.
 	var vertices = []float32{
@@ -65,7 +66,7 @@ func (ct *ContainerTexture) InitGLPipeLine() {
 	gl.Uniform1i(gl.GetUniformLocation(ct.ShaderProgram, gl.Str("texture2"+"\x00")), 1)
 }
 
-func (ct *ContainerTexture) Draw() {
+func (ct *Transformation) Draw() {
 
 	gl.ClearColor(0.2, 0.3, 0.3, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
@@ -76,8 +77,15 @@ func (ct *ContainerTexture) Draw() {
 	gl.ActiveTexture(gl.TEXTURE1)
 	gl.BindTexture(gl.TEXTURE_2D, ct.texture2)
 
+	// create transformations
+	trans := mgl32.Ident4()
+	trans = trans.Mul4(mgl32.Translate3D(0.5, -0.5, 0))
+	trans = trans.Mul4(mgl32.HomogRotate3D(float32(glfw.GetTime()), mgl32.Vec3{0.0, 0.0, 1.0}))
+
+	transformLoc := gl.GetUniformLocation(ct.ShaderProgram, gl.Str("transform"+"\x00"))
+	gl.UniformMatrix4fv(transformLoc, 1, false, &trans[0])
+
 	// render container
-	gl.UseProgram(ct.ShaderProgram)
 	gl.BindVertexArray(ct.VAO)
 	gl.DrawElementsWithOffset(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0)
 
