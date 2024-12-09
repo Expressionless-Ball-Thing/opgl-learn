@@ -33,7 +33,7 @@ func main() {
 	gl.Enable(gl.DEPTH_TEST) // Tell opengl to enable depth testing
 
 	// Load Render here
-	var render renders.Render = &lighting.Lighting{}
+	var render renders.Render = &lighting.Phong{}
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
 	window.SetCursorPosCallback(render.MouseCallback)
@@ -58,12 +58,6 @@ func main() {
 func framebuffer_size_callback(window *glfw.Window, width, height int) {
 	// set the viewport
 	gl.Viewport(0, 0, int32(width), int32(height))
-}
-
-func processInput(window *glfw.Window) {
-	// if window.GetKey(glfw.KeyEscape) == glfw.Press {
-	// 	window.SetShouldClose(true)
-	// }
 }
 
 // Setup GLFW and OpenGL function loaders

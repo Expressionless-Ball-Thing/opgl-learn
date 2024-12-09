@@ -13,6 +13,8 @@ const (
 	BACKWARD
 	LEFT
 	RIGHT
+	UP
+	DOWN
 )
 
 // Camera default values
@@ -73,17 +75,20 @@ func (c *Camera) GetViewMatrix() mgl32.Mat4 {
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 func (c *Camera) ProcessKeyboard(direction int, deltaTime float64) {
 	velocity := float32(c.MovementSpeed * deltaTime)
-	if direction == FORWARD {
+
+	switch direction {
+	case FORWARD:
 		c.Position = c.Position.Add(c.Front.Mul(velocity))
-	}
-	if direction == BACKWARD {
+	case BACKWARD:
 		c.Position = c.Position.Sub(c.Front.Mul(velocity))
-	}
-	if direction == LEFT {
+	case LEFT:
 		c.Position = c.Position.Sub(c.Right.Mul(velocity))
-	}
-	if direction == RIGHT {
+	case RIGHT:
 		c.Position = c.Position.Add(c.Right.Mul(velocity))
+	case UP:
+		c.Position = c.Position.Add(c.Up.Mul(velocity))
+	case DOWN:
+		c.Position = c.Position.Sub(c.Up.Mul(velocity))
 	}
 }
 
