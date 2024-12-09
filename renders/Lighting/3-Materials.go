@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-type Phong struct {
+type Materials struct {
 	ShaderProgram, LightCubeShader uint32
 	VBO, cubeVAO                   uint32
 	lightCubeVAO                   uint32
@@ -17,13 +17,13 @@ type Phong struct {
 	lightPos                       mgl32.Vec3
 }
 
-func (ct *Phong) InitGLPipeLine() {
+func (ct *Materials) InitGLPipeLine() {
 
 	ct.lightPos = mgl32.Vec3{1.2, 1.0, 2.0}
 
 	ct.camera = utils.NewCamera(mgl32.Vec3{0.5, 1.0, 4.0}, mgl32.Vec3{0, 1, 0}, utils.YAW, utils.PITCH)
 
-	ct.ShaderProgram = utils.NewShader("./shaders/Lighting/2-PhongVert.glsl", "./shaders/Lighting/2-PhongFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/Lighting/2-PhongVert.glsl", "./shaders/Lighting/3-MaterialFrag.glsl")
 	ct.LightCubeShader = utils.NewShader("./shaders/Lighting/1-LightVert.glsl", "./shaders/Lighting/1-LightFrag.glsl")
 
 	vertices := []float32{
@@ -102,7 +102,7 @@ func (ct *Phong) InitGLPipeLine() {
 
 }
 
-func (ct *Phong) Draw() {
+func (ct *Materials) Draw() {
 
 	gl.ClearColor(0.1, 0.1, 0.1, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -116,6 +116,28 @@ func (ct *Phong) Draw() {
 	utils.SetVec3(ct.ShaderProgram, "lightColor", &mgl32.Vec3{1.0, 1.0, 1.0})
 	utils.SetVec3(ct.ShaderProgram, "lightPos", &ct.lightPos)
 	utils.SetVec3(ct.ShaderProgram, "viewPos", &(ct.camera.Position))
+
+	// material stuff
+	utils.SetVec3(ct.ShaderProgram, "material.ambient", &mgl32.Vec3{1.0, 0.5, 0.31})
+	utils.SetVec3(ct.ShaderProgram, "material.diffuse", &mgl32.Vec3{1.0, 0.5, 0.31})
+	utils.SetVec3(ct.ShaderProgram, "material.specular", &mgl32.Vec3{0.5, 0.5, 0.5})
+	utils.SetFloat(ct.ShaderProgram, "material.shininess", 32.0)
+
+	// Light stuff
+
+	// Time varing light color
+	lightColor := mgl32.Vec3{
+		float32(math.Sin(glfw.GetTime() * 2)),
+		float32(math.Sin(glfw.GetTime() * 0.7)),
+		float32(math.Sin(glfw.GetTime() * 1.3)),
+	}
+
+	diffuseColor := lightColor.Mul(0.5)
+	ambientColor := lightColor.Mul(0.2)
+
+	utils.SetVec3(ct.ShaderProgram, "light.ambient", &ambientColor)
+	utils.SetVec3(ct.ShaderProgram, "light.diffuse", &diffuseColor)
+	utils.SetVec3(ct.ShaderProgram, "light.specular", &mgl32.Vec3{1, 1, 1})
 
 	// camera/view transformation
 	projection := mgl32.Perspective(mgl32.DegToRad(float32(ct.camera.Zoom)), float32(800/600), 0.1, 100)
@@ -144,7 +166,7 @@ func (ct *Phong) Draw() {
 	gl.DrawArrays(gl.TRIANGLES, 0, 36)
 }
 
-func (ct *Phong) KeyboardCallback(window *glfw.Window) {
+func (ct *Materials) KeyboardCallback(window *glfw.Window) {
 
 	currentFrame := glfw.GetTime()
 	deltaTime := currentFrame - lastFrame
@@ -173,7 +195,7 @@ func (ct *Phong) KeyboardCallback(window *glfw.Window) {
 	}
 }
 
-func (ct *Phong) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
+func (ct *Materials) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
 	if firstMouse {
 		firstMouse = false
 		lastxPos = xpos
@@ -188,6 +210,6 @@ func (ct *Phong) MouseCallback(window *glfw.Window, xpos float64, ypos float64) 
 	ct.camera.ProcessMouseMovement(xoffset, yoffset, true)
 }
 
-func (ct *Phong) ScrollCallback(window *glfw.Window, xoff float64, yoff float64) {
+func (ct *Materials) ScrollCallback(window *glfw.Window, xoff float64, yoff float64) {
 	ct.camera.ProcessMouseScroll(yoff)
 }
