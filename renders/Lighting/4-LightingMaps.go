@@ -9,65 +9,67 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-type Materials struct {
+type LightingMaps struct {
 	ShaderProgram, LightCubeShader uint32
 	VBO, cubeVAO                   uint32
 	lightCubeVAO                   uint32
 	camera                         utils.Camera
 	lightPos                       mgl32.Vec3
+	diffuseMap, specularMap        uint32
 }
 
-func (ct *Materials) InitGLPipeLine() {
+func (ct *LightingMaps) InitGLPipeLine() {
 
 	ct.lightPos = mgl32.Vec3{1.2, 1.0, 2.0}
 
 	ct.camera = utils.NewCamera(mgl32.Vec3{0.5, 1.0, 4.0}, mgl32.Vec3{0, 1, 0}, utils.YAW, utils.PITCH)
 
-	ct.ShaderProgram = utils.NewShader("./shaders/Lighting/2-PhongVert.glsl", "./shaders/Lighting/3-MaterialFrag.glsl")
+	ct.ShaderProgram = utils.NewShader("./shaders/Lighting/4-LightingMapsVert.glsl", "./shaders/Lighting/4-LightingMapsFrag.glsl")
 	ct.LightCubeShader = utils.NewShader("./shaders/Lighting/1-LightVert.glsl", "./shaders/Lighting/1-LightFrag.glsl")
 
 	vertices := []float32{
-		-0.5, -0.5, -0.5, 0.0, 0.0, -1.0,
-		0.5, -0.5, -0.5, 0.0, 0.0, -1.0,
-		0.5, 0.5, -0.5, 0.0, 0.0, -1.0,
-		0.5, 0.5, -0.5, 0.0, 0.0, -1.0,
-		-0.5, 0.5, -0.5, 0.0, 0.0, -1.0,
-		-0.5, -0.5, -0.5, 0.0, 0.0, -1.0,
+		// positions          // normals           // texture coords
+		-0.5, -0.5, -0.5, 0.0, 0.0, -1.0, 0.0, 0.0,
+		0.5, -0.5, -0.5, 0.0, 0.0, -1.0, 1.0, 0.0,
+		0.5, 0.5, -0.5, 0.0, 0.0, -1.0, 1.0, 1.0,
+		0.5, 0.5, -0.5, 0.0, 0.0, -1.0, 1.0, 1.0,
+		-0.5, 0.5, -0.5, 0.0, 0.0, -1.0, 0.0, 1.0,
+		-0.5, -0.5, -0.5, 0.0, 0.0, -1.0, 0.0, 0.0,
 
-		-0.5, -0.5, 0.5, 0.0, 0.0, 1.0,
-		0.5, -0.5, 0.5, 0.0, 0.0, 1.0,
-		0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-		0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-		-0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-		-0.5, -0.5, 0.5, 0.0, 0.0, 1.0,
+		-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
+		0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0, 0.0,
+		0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
+		0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
+		-0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
+		-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
 
-		-0.5, 0.5, 0.5, -1.0, 0.0, 0.0,
-		-0.5, 0.5, -0.5, -1.0, 0.0, 0.0,
-		-0.5, -0.5, -0.5, -1.0, 0.0, 0.0,
-		-0.5, -0.5, -0.5, -1.0, 0.0, 0.0,
-		-0.5, -0.5, 0.5, -1.0, 0.0, 0.0,
-		-0.5, 0.5, 0.5, -1.0, 0.0, 0.0,
+		-0.5, 0.5, 0.5, -1.0, 0.0, 0.0, 1.0, 0.0,
+		-0.5, 0.5, -0.5, -1.0, 0.0, 0.0, 1.0, 1.0,
+		-0.5, -0.5, -0.5, -1.0, 0.0, 0.0, 0.0, 1.0,
+		-0.5, -0.5, -0.5, -1.0, 0.0, 0.0, 0.0, 1.0,
+		-0.5, -0.5, 0.5, -1.0, 0.0, 0.0, 0.0, 0.0,
+		-0.5, 0.5, 0.5, -1.0, 0.0, 0.0, 1.0, 0.0,
 
-		0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
-		0.5, 0.5, -0.5, 1.0, 0.0, 0.0,
-		0.5, -0.5, -0.5, 1.0, 0.0, 0.0,
-		0.5, -0.5, -0.5, 1.0, 0.0, 0.0,
-		0.5, -0.5, 0.5, 1.0, 0.0, 0.0,
-		0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
+		0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 1.0, 0.0,
+		0.5, 0.5, -0.5, 1.0, 0.0, 0.0, 1.0, 1.0,
+		0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 0.0, 1.0,
+		0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 0.0, 1.0,
+		0.5, -0.5, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0,
+		0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 1.0, 0.0,
 
-		-0.5, -0.5, -0.5, 0.0, -1.0, 0.0,
-		0.5, -0.5, -0.5, 0.0, -1.0, 0.0,
-		0.5, -0.5, 0.5, 0.0, -1.0, 0.0,
-		0.5, -0.5, 0.5, 0.0, -1.0, 0.0,
-		-0.5, -0.5, 0.5, 0.0, -1.0, 0.0,
-		-0.5, -0.5, -0.5, 0.0, -1.0, 0.0,
+		-0.5, -0.5, -0.5, 0.0, -1.0, 0.0, 0.0, 1.0,
+		0.5, -0.5, -0.5, 0.0, -1.0, 0.0, 1.0, 1.0,
+		0.5, -0.5, 0.5, 0.0, -1.0, 0.0, 1.0, 0.0,
+		0.5, -0.5, 0.5, 0.0, -1.0, 0.0, 1.0, 0.0,
+		-0.5, -0.5, 0.5, 0.0, -1.0, 0.0, 0.0, 0.0,
+		-0.5, -0.5, -0.5, 0.0, -1.0, 0.0, 0.0, 1.0,
 
-		-0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
-		0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
-		0.5, 0.5, 0.5, 0.0, 1.0, 0.0,
-		0.5, 0.5, 0.5, 0.0, 1.0, 0.0,
-		-0.5, 0.5, 0.5, 0.0, 1.0, 0.0,
-		-0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
+		-0.5, 0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
+		0.5, 0.5, -0.5, 0.0, 1.0, 0.0, 1.0, 1.0,
+		0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+		0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+		-0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 0.0,
+		-0.5, 0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
 	}
 
 	gl.GenVertexArrays(1, &ct.cubeVAO)
@@ -79,12 +81,16 @@ func (ct *Materials) InitGLPipeLine() {
 	gl.BindVertexArray(ct.cubeVAO)
 
 	// Position attribs
-	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 6*4, 0)
+	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 8*4, 0)
 	gl.EnableVertexAttribArray(0)
 
 	// Normal Attribs, it's the third float of each 6 float block.
-	gl.VertexAttribPointerWithOffset(1, 3, gl.FLOAT, false, 6*4, 3*4)
+	gl.VertexAttribPointerWithOffset(1, 3, gl.FLOAT, false, 8*4, 3*4)
 	gl.EnableVertexAttribArray(1)
+
+	// TexCoords
+	gl.VertexAttribPointerWithOffset(2, 2, gl.FLOAT, false, 8*4, 6*4)
+	gl.EnableVertexAttribArray(2)
 
 	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
 	gl.GenVertexArrays(1, &ct.lightCubeVAO)
@@ -93,22 +99,25 @@ func (ct *Materials) InitGLPipeLine() {
 	// we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need
 	gl.BindBuffer(gl.ARRAY_BUFFER, ct.VBO)
 
-	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 6*4, 0)
+	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 8*4, 0)
 	gl.EnableVertexAttribArray(0)
 
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	gl.UseProgram(ct.ShaderProgram) // don't forget to activate/use the shader before setting uniforms!
+	// Texture Stuff
+	ct.diffuseMap = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container2.png")
+	ct.specularMap = utils.New2DTexture(gl.REPEAT, gl.REPEAT, gl.LINEAR, gl.LINEAR, "./assets/container2_specular.png")
+	gl.UseProgram(ct.ShaderProgram)
+	utils.SetInt(ct.ShaderProgram, "material.diffuse", 0)
+	utils.SetInt(ct.ShaderProgram, "material.specular", 1)
 
 }
 
-func (ct *Materials) Draw() {
+func (ct *LightingMaps) Draw() {
 
 	gl.ClearColor(0.1, 0.1, 0.1, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 	ct.lightPos[0] = float32(1.0 + math.Sin(float64(glfw.GetTime()))*2)
-	ct.lightPos[1] = float32(math.Sin(float64(glfw.GetTime())/2.0)) * 1.0
+	ct.lightPos[1] = float32(math.Sin(float64(glfw.GetTime()) / 2.0))
 
 	// activate shader
 	gl.UseProgram(ct.ShaderProgram)
@@ -116,19 +125,11 @@ func (ct *Materials) Draw() {
 	utils.SetVec3(ct.ShaderProgram, "viewPos", &(ct.camera.Position))
 
 	// material stuff
-	utils.SetVec3(ct.ShaderProgram, "material.ambient", &mgl32.Vec3{1.0, 0.5, 0.31})
-	utils.SetVec3(ct.ShaderProgram, "material.diffuse", &mgl32.Vec3{1.0, 0.5, 0.31})
 	utils.SetVec3(ct.ShaderProgram, "material.specular", &mgl32.Vec3{0.5, 0.5, 0.5})
-	utils.SetFloat(ct.ShaderProgram, "material.shininess", 32.0)
-
-	// Light stuff
+	utils.SetFloat(ct.ShaderProgram, "material.shininess", 64.0)
 
 	// Time varing light color
-	lightColor := mgl32.Vec3{
-		float32(math.Sin(glfw.GetTime() * 2)),
-		float32(math.Sin(glfw.GetTime() * 0.7)),
-		float32(math.Sin(glfw.GetTime() * 1.3)),
-	}
+	lightColor := mgl32.Vec3{1, 1, 1}
 
 	diffuseColor := lightColor.Mul(0.5)
 	ambientColor := lightColor.Mul(0.2)
@@ -145,8 +146,15 @@ func (ct *Materials) Draw() {
 
 	// world transforms
 	model := mgl32.Ident4()
-	model = model.Mul4(mgl32.Scale3D(3, 3, 3))
+	// model = model.Mul4(mgl32.Scale3D(3, 3, 3))
 	utils.SetMat4(ct.ShaderProgram, "model", &model)
+
+	// texture stuff
+	gl.ActiveTexture(gl.TEXTURE0)
+	gl.BindTexture(gl.TEXTURE_2D, ct.diffuseMap)
+
+	gl.ActiveTexture(gl.TEXTURE1)
+	gl.BindTexture(gl.TEXTURE_2D, ct.specularMap)
 
 	// render the cube
 	gl.BindVertexArray(ct.cubeVAO)
@@ -164,7 +172,7 @@ func (ct *Materials) Draw() {
 	gl.DrawArrays(gl.TRIANGLES, 0, 36)
 }
 
-func (ct *Materials) KeyboardCallback(window *glfw.Window) {
+func (ct *LightingMaps) KeyboardCallback(window *glfw.Window) {
 
 	currentFrame := glfw.GetTime()
 	deltaTime := currentFrame - lastFrame
@@ -193,7 +201,7 @@ func (ct *Materials) KeyboardCallback(window *glfw.Window) {
 	}
 }
 
-func (ct *Materials) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
+func (ct *LightingMaps) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
 	if firstMouse {
 		firstMouse = false
 		lastxPos = xpos
@@ -208,6 +216,6 @@ func (ct *Materials) MouseCallback(window *glfw.Window, xpos float64, ypos float
 	ct.camera.ProcessMouseMovement(xoffset, yoffset, true)
 }
 
-func (ct *Materials) ScrollCallback(window *glfw.Window, xoff float64, yoff float64) {
+func (ct *LightingMaps) ScrollCallback(window *glfw.Window, xoff float64, yoff float64) {
 	ct.camera.ProcessMouseScroll(yoff)
 }
