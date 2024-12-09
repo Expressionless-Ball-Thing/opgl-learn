@@ -33,7 +33,7 @@ func main() {
 	gl.Enable(gl.DEPTH_TEST) // Tell opengl to enable depth testing
 
 	// Load Render here
-	var render renders.Render = &lighting.Spotlight{}
+	var render renders.Render = &lighting.MultipleLights{}
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
 	window.SetCursorPosCallback(render.MouseCallback)
