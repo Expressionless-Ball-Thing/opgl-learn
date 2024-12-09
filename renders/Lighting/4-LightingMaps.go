@@ -125,7 +125,6 @@ func (ct *LightingMaps) Draw() {
 	utils.SetVec3(ct.ShaderProgram, "viewPos", &(ct.camera.Position))
 
 	// material stuff
-	utils.SetVec3(ct.ShaderProgram, "material.specular", &mgl32.Vec3{0.5, 0.5, 0.5})
 	utils.SetFloat(ct.ShaderProgram, "material.shininess", 64.0)
 
 	// Time varing light color
