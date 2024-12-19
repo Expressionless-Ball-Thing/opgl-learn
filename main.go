@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"opgl-learn/renders"
-	lighting "opgl-learn/renders/Lighting"
+	"opgl-learn/renders/ModelLoading"
 	"os"
 	"runtime"
 
@@ -31,9 +31,9 @@ func main() {
 	// configure global opengl state
 	// -----------------------------
 	gl.Enable(gl.DEPTH_TEST) // Tell opengl to enable depth testing
-
 	// Load Render here
-	var render renders.Render = &lighting.MultipleLights{}
+	// var render renders.Render = &lighting.MultipleLights{}
+	var render renders.Render = &ModelLoading.ModelLoad{}
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	render.InitGLPipeLine()
 	window.SetCursorPosCallback(render.MouseCallback)
