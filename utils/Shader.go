@@ -169,6 +169,18 @@ func New2DTexture(wrap_s, wrap_t, min_filter, max_filter int32, texturePath stri
 	}
 	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
 
+	// Flip the image vertically.
+	bounds := img.Bounds()
+	width, height := bounds.Dx(), bounds.Dy()
+	flipped := image.NewRGBA(bounds)
+
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			originalPixel := img.At(x, y)
+			flipped.Set(x, height-y-1, originalPixel)
+		}
+	}
+
 	gl.TexImage2D(
 		gl.TEXTURE_2D,
 		0,
@@ -178,7 +190,7 @@ func New2DTexture(wrap_s, wrap_t, min_filter, max_filter int32, texturePath stri
 		0,
 		gl.RGBA,
 		gl.UNSIGNED_BYTE,
-		gl.Ptr(rgba.Pix),
+		gl.Ptr(flipped.Pix),
 	)
 	gl.GenerateMipmap(gl.TEXTURE_2D)
 	gl.BindTexture(gl.TEXTURE_2D, 0)

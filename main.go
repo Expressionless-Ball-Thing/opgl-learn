@@ -78,6 +78,7 @@ func setup() *glfw.Window {
 		os.Exit(1)
 	}
 	window.MakeContextCurrent()
+	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
 	window.SetFramebufferSizeCallback(framebuffer_size_callback)
 
 	// load all OpenGL function pointers
